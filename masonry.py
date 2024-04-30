@@ -3,12 +3,16 @@ import random
 from enum import Enum, unique
 from typing import Optional
 
-from PySide6.QtCore import Property, QSize, QRect, QMargins
-from PySide6.QtWidgets import QLayout, QLayoutItem, QWidget
+from qtpy.QtCore import Property, QSize, QRect, QMargins
+from qtpy.QtWidgets import QLayout, QLayoutItem, QWidget
 
 
 @unique
 class HorizontalAdaptationStrategy(Enum):
+    """
+    The strategy adopted when the spacing and the width of horizontal sub-items cannot fill the layout width.
+    """
+
     NoAdaption = enum.auto()
     Spacing = enum.auto()
     AutoZoom = enum.auto()
@@ -19,6 +23,9 @@ HAdapt = HorizontalAdaptationStrategy
 
 @unique
 class VerticalExpansionStrategy(Enum):
+    """
+    The strategy to solve the problem of how to expand vertically after new sub-items are added to the layout.
+    """
     HeightBalance = enum.auto()
     OrderInsert = enum.auto()
     RandomInsert = enum.auto()
@@ -29,6 +36,9 @@ VExpand = VerticalExpansionStrategy
 
 @unique
 class OverflowStrategy(Enum):
+    """
+    The strategy adopted when the column width conflicts with the width of the sub-item.
+    """
     Ignore = enum.auto()
     AutoZoom = enum.auto()
     AutoCrop = enum.auto()
@@ -38,8 +48,11 @@ Overflow = OverflowStrategy
 
 
 class QMasonryBoxLayout(QLayout):
-    def __init__(self):
-        super().__init__()
+    """
+    Masonry layout with fixed number of columns
+    """
+    def __init__(self, parent: QWidget):
+        super().__init__(parent)
         self._horizontalAdaptationStrategy = HorizontalAdaptationStrategy.AutoZoom
         self._verticalExpansionStrategy = VerticalExpansionStrategy.HeightBalance
         self._overflowStrategy = OverflowStrategy.AutoZoom
@@ -203,6 +216,9 @@ class QMasonryBoxLayout(QLayout):
 
 
 class QMasonryFlowLayout(QLayout):
+    """
+    Masonry layout with fixed number of columns
+    """
     def __init__(self):
         super().__init__()
         self._horizontalAdaptationStrategy = HorizontalAdaptationStrategy.AutoZoom
@@ -234,6 +250,10 @@ class QMasonryFlowLayout(QLayout):
 
     vExpand = Property(VerticalExpansionStrategy, verticalExpansionStrategy, setVerticalExpansionStrategy)
 
+    def setSpacing(self, spacing: int) -> None:
+        self._horizontalSpacing = spacing
+        self._verticalSpacing = spacing
+
     def setHorizontalSpacing(self, spacing: int):
         self._horizontalSpacing = spacing
 
@@ -263,7 +283,7 @@ class QMasonryFlowLayout(QLayout):
 
     colWidth = Property(int, columnWidth, setColumnWidth)
 
-    def calculateColumnCount(self, rect:QRect, margin: QMargins, spaceX:int):
+    def calculateColumnCount(self, rect: QRect, margin: QMargins, spaceX: int):
         columnCount = max(1, (rect.width() - margin.left() - margin.right() + spaceX) // (self._columnWidth + spaceX))
         self._columnCount = columnCount
 
@@ -296,7 +316,7 @@ class QMasonryFlowLayout(QLayout):
 
     def _handlePosition(self, rect: QRect,
                         margin: QMargins, spaceX: int, spaceY: int,
-                        targetColumnIndex:int, columnTotalHeights:list[int],
+                        targetColumnIndex: int, columnTotalHeights: list[int],
                         itemWidth: int, itemHeight: int, itemWidget: QWidget, itemRatio: float):
         if self._horizontalAdaptationStrategy == HorizontalAdaptationStrategy.NoAdaption:
             x = margin.left() + self.columnWidth() * (

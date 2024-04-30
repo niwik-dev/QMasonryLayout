@@ -1,10 +1,9 @@
-from PySide6.QtCore import Qt
+import random
+import sys
+
+from qtpy.QtWidgets import QApplication, QWidget, QLabel
 
 from layout.masonry import QMasonryFlowLayout, HAdapt, VExpand
-
-import sys
-from PySide6.QtWidgets import QApplication, QWidget, QLabel
-import random
 
 
 class TestWidget(QWidget):
