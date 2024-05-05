@@ -2,7 +2,6 @@
 #include <QWidget>
 #include <stdexcept>
 #include <algorithm>
-#include <QDebug>
 
 enum HorizontalAdaptationStrategy{
     NoAdaption,
@@ -253,7 +252,6 @@ private:
                 double real_column_width = getRealColumnWidth(target_column_index);
                 getItemTopLeft(real_column_width,x,y);
                 double column_height = real_column_width*item_ratio;
-                qDebug()<<column_height<<Qt::endl;
                 item_widget->setFixedSize(QSize(real_column_width, column_height));
                 column_total_heights[target_column_index] += column_height+space_y;
                 break;
